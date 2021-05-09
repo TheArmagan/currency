@@ -10,7 +10,7 @@ const CURRENCY_REGEX = /<Cube currency='(\S+?)' rate='([\d.]+?)'\/>/gm;
 const UPDATE_DATE_REGEX = /<Cube time='([\d-]+?)'>/m;
 const DATA_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 
-let DATA_DIR = resolve("./data");
+let DATA_DIR = resolve("./api");
 
 (async () => {
   try {
@@ -35,16 +35,22 @@ let DATA_DIR = resolve("./data");
   let fileTasks = [];
 
   fileTasks.push(async (cb) => {
-    await writeDataFile("main-data.json", JSON.stringify({
+    await writeDataFile("index.json", JSON.stringify({
       currencies: currencyDataObject,
       updateDate,
       base: "EUR"
     }));
+    let indexTXT = "base=ERU\n";
+    indexTXT += `updateDate=${updateDate}\n`;
+    indexTXT += currencyData.map(i => `${i[0]}=${i[1]}`).join("\n");
+    indexTXT = indexTXT.trim();
+    await writeDataFile("index.txt", indexTXT);
     cb();
   });
 
   fileTasks.push(async (cb) => {
     await writeDataFile("update-date.txt", String(updateDate));
+    await writeDataFile("update-date.json", JSON.stringify({value: updateDate}));
     cb();
   });
 
@@ -54,7 +60,9 @@ let DATA_DIR = resolve("./data");
       toIndex = (currencyData.length-1) - toIndex;
       let to = currencyData[toIndex];
       fileTasks.push(async (cb) => {
-        await writeDataFile(`${from[0]}-to-${to[0]}.txt`, fromTo(from[1], to[1]).toFixed(8));
+        let value = fromTo(from[1], to[1]).toFixed(8);
+        await writeDataFile(`${from[0]}-to-${to[0]}.txt`, value);
+        await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: parseFloat(value), updateDate}));
         cb();
       })
     });
@@ -95,12 +103,10 @@ function parseUpdateDate(d = "") {
 }
 
 async function mkdir(dir) {
-  console.log(`Make DIR: ${dir}`);
   if (!existsSync(dir)) await fsMkdir(dir, { recursive: true });
 }
 
 async function rmdir(dir) {
-  console.log(`Remove DIR: ${dir}`);
   if (!existsSync(dir)) return;
   let fileNames = readdir(dir, "utf-8");
   let tasks = [];
@@ -121,6 +127,5 @@ async function rmdir(dir) {
  * @param {string} data 
  */
 async function writeDataFile(name, data) {
-  console.log(`Write Data: ${name} -> ${data}`);
   await writeFile(resolve(DATA_DIR, name), data, "utf-8");
 }
