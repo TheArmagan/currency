@@ -36,15 +36,6 @@ jobs:
         run: |
           git config --global user.name "TheArmagan"
           git config --global user.email "kiracarmaganonal@gmail.com" 
-
-      - name: Clear API Data
-        run: rm -rf ./api > /dev/null # Ignore if error happens
-
-      - name: Clear Old Data
-        run: |
-          git add api -f
-          git commit -m "[🚀] Clear Old Data"
-          git push -f
       
       - name: Install Yarn
         run: npm install -g yarn          
