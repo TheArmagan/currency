@@ -1,0 +1,36 @@
+name: Update Currencies
+
+on:
+  
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.16.1
+      
+      - name: Install Yarn
+        run: npm install -g yarn          
+
+      - name: Install Decencies
+        run: yarn install --production=true
+
+      - name: Run Updater & Update Data
+        run: yarn run data-updater

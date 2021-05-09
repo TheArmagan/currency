@@ -1,0 +1,20 @@
+{
+  "name": "currency",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/TheArmagan/currency.git",
+  "author": "Kıraç Armağan Önal <kiracarmaganonal@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "data-updater": "node update.js"
+  },
+  "dependencies": {
+    "chillout": "^5.0.0",
+    "got": "^11.8.2",
+    "run-parallel-limit": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "@types/run-parallel-limit": "^1.0.0"
+  }
+}
