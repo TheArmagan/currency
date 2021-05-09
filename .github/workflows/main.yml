@@ -40,6 +40,6 @@ jobs:
           git config --global user.name "TheArmagan"
           git config --global user.email "kiracarmaganonal@gmail.com" 
           
-          git add data -f
+          git add api -f
           git commit -m "[🚀] Deploy Updated Data"
           git push -f
