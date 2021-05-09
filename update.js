@@ -89,7 +89,7 @@ function fromTo(from, to) {
 function parseCurrencies(d = "") {
   let matches = Array.from(d.matchAll(CURRENCY_REGEX));
   let result = matches.map(i => {
-    return ([i[1], parseFloat(i[2])]);
+    return ([i[1], parseFloat(parseFloat(i[2]).toFixed(8))]);
   });
   return result;
 }
