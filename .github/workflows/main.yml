@@ -34,7 +34,7 @@ jobs:
       - name: Clear API Data
         run: rm -rf ./api
 
-      - name: [🚀] Clear Old Data
+      - name: Clear Old Data
         run: |
           git add api -f
           git commit -m "[🚀] Clear Old Data"
@@ -49,7 +49,7 @@ jobs:
       - name: Run Updater & Update Data
         run: yarn run data-updater
 
-      - name: [🚀] Deploy Updated Data
+      - name: Deploy Updated Data
         run: |
           git add api -f
           git commit -m "[🚀] Deploy Updated Data"
