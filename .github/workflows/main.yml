@@ -25,6 +25,9 @@ jobs:
         uses: actions/setup-node@v2.1.5
         with:
           node-version: 14.16.1
+
+      - name: Clear API Data
+        run: rm -rf ./api
       
       - name: Install Yarn
         run: npm install -g yarn          
