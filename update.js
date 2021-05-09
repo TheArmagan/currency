@@ -1,4 +1,4 @@
-const {existsSync, promises: { mkdir: fsMkdir, writeFile, unlink, readdir }} = require("fs");
+const {existsSync, promises: { mkdir: fsMkdir, writeFile, unlink, readdir, readFile }} = require("fs");
 const {resolve} = require("path");
 const got = require("got").default;
 const parallelLimit = require("run-parallel-limit");
@@ -26,7 +26,6 @@ let DATA_DIR = resolve("./api");
   });
 
   let currencyData = parseCurrencies(body);
-  let currencyDataObject = Object.fromEntries(currencyData);
   let updateDate = parseUpdateDate(body);
 
   /**
@@ -35,22 +34,8 @@ let DATA_DIR = resolve("./api");
   let fileTasks = [];
 
   fileTasks.push(async (cb) => {
-    await writeDataFile("index.json", JSON.stringify({
-      currencies: currencyDataObject,
-      updateDate,
-      base: "EUR"
-    }));
-    let indexTXT = "base=ERU\n";
-    indexTXT += `updateDate=${updateDate}\n`;
-    indexTXT += currencyData.map(i => `${i[0]}=${i[1]}`).join("\n");
-    indexTXT = indexTXT.trim();
-    await writeDataFile("index.txt", indexTXT);
-    cb();
-  });
-
-  fileTasks.push(async (cb) => {
     await writeDataFile("update-date.txt", String(updateDate));
-    await writeDataFile("update-date.json", JSON.stringify({value: updateDate}));
+    await writeDataFile("update-date.json", JSON.stringify({value: updateDate},null,2));
     cb();
   });
 
@@ -60,12 +45,26 @@ let DATA_DIR = resolve("./api");
       toIndex = (currencyData.length-1) - toIndex;
       let to = currencyData[toIndex];
       fileTasks.push(async (cb) => {
-        let value = fromTo(from[1], to[1]).toFixed(8);
+        let value = `${fromTo(from[1], to[1])}`;
         await writeDataFile(`${from[0]}-to-${to[0]}.txt`, value);
-        await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: parseFloat(value), updateDate}));
+        await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: value, updateDate},null,2));
         cb();
       })
     });
+
+    fileTasks.push(async (cb) => {
+      let values = currencyData.map(i=>([i[0], fromTo(from[1], i[1])]));
+      await writeDataFile(`${from[0]}-to-ALL.json`, JSON.stringify({
+        updateDate,
+        from: from[0],
+        to: Object.fromEntries(values)
+      },null,2));
+      let textVersion = `base=${from[0]}\n`;
+      textVersion += `updateDate=${updateDate}\n`;
+      textVersion += values.map(i => `${i[0]}=${i[1]}`).join("\n");
+      await writeDataFile(`${from[0]}-to-ALL.txt`, textVersion);
+      cb();
+    })
   });
 
   await (new Promise(r => {
@@ -73,7 +72,7 @@ let DATA_DIR = resolve("./api");
   }));
 
   const endTime = Date.now();
-  console.log(`Update finished! Took ${((endTime - startTime) / 1000).toFixed(2)} seconds!`);
+  console.log(`Update finished! Took ${((endTime - startTime) / 1000).toFixed(4)} seconds!`);
 
   process.exit(0);
 })();
@@ -89,7 +88,7 @@ function fromTo(from, to) {
 function parseCurrencies(d = "") {
   let matches = Array.from(d.matchAll(CURRENCY_REGEX));
   let result = matches.map(i => {
-    return ([i[1], parseFloat(parseFloat(i[2]).toFixed(8))]);
+    return ([i[1], `${parseFloat(i[2])}`]);
   });
   return result;
 }
