@@ -37,6 +37,9 @@ jobs:
 
       - name: Deploy Updated Data
         run: |
+          git config --global user.name "TheArmagan"
+          git config --global user.email "kiracarmaganonal@gmail.com" 
+          
           git add data -f
-          git commit -m "Deploy Updated Data"
+          git commit -m "[CI] Deploy Updated Data"
           git push -f
