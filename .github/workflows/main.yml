@@ -34,3 +34,10 @@ jobs:
 
       - name: Run Updater & Update Data
         run: yarn run data-updater
+
+      - name: Update Data
+        uses: test-room-7/action-update-file@v1
+        with:
+            file-path: data/*.*
+            commit-msg: Update Data
+            github-token: ${{ secrets.GITHUB_TOKEN }}
