@@ -41,5 +41,5 @@ jobs:
           git config --global user.email "kiracarmaganonal@gmail.com" 
           
           git add api -f
-          git commit -m "[🚀] Deploy Updated Data" -f
+          git commit -m "[🚀] Deploy Updated Data"
           git push -f
