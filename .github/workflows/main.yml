@@ -38,7 +38,7 @@ jobs:
           git config --global user.email "kiracarmaganonal@gmail.com" 
 
       - name: Clear API Data
-        run: rm -rf ./api || true # Ignore if error happens
+        run: rm -rf ./api > /dev/null # Ignore if error happens
 
       - name: Clear Old Data
         run: |
