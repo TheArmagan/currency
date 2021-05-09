@@ -11,7 +11,7 @@ on:
   
 
   schedule:
-    corn: [ "0 0 */1 * *" ] # Every day
+    - corn: [ "0 0 */1 * *" ] # Every day
 
   
   workflow_dispatch:
