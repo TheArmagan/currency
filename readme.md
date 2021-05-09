@@ -1,6 +1,6 @@
 # Github CI - Currency API
 
-**All data are automatically updates every 12 hours!**
+**All data are automatically updates every 24 hours!**
 
 ## Available Currency Types
 - USD
