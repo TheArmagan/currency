@@ -60,7 +60,7 @@ let DATA_DIR = resolve("./api");
     });
 
     fileTasks.push(async (cb) => {
-      let values = currencyData.map(i=>([i[0], fromTo(from[1], i[1])]));
+      let values = currencyData.map(i=>([i[0], String(fromTo(from[1], i[1]))]));
       await writeDataFile(`${from[0]}-to-ALL.json`, JSON.stringify({
         updateDate,
         from: from[0],
