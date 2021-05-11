@@ -27,6 +27,7 @@ let DATA_DIR = resolve("./api");
 
   let currencyData = parseCurrencies(body);
   let updateDate = parseUpdateDate(body);
+  let checkDate = Date.now();
 
   /**
    * @type {((cb:()=>{})=>{})[]}
@@ -39,6 +40,12 @@ let DATA_DIR = resolve("./api");
     cb();
   });
 
+  fileTasks.push(async (cb) => {
+    await writeDataFile("check-date.txt", String(checkDate));
+    await writeDataFile("check-date.json", JSON.stringify({value: checkDate},null,2));
+    cb();
+  });
+
   await chillout.repeat(currencyData.length, async (fromIndex) => {
     let from = currencyData[fromIndex];
     await chillout.repeat(currencyData.length, async (toIndex) => {
@@ -47,7 +54,7 @@ let DATA_DIR = resolve("./api");
       fileTasks.push(async (cb) => {
         let value = `${fromTo(from[1], to[1])}`;
         await writeDataFile(`${from[0]}-to-${to[0]}.txt`, value);
-        await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: value, updateDate},null,2));
+        await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: value, updateDate, checkDate},null,2));
         cb();
       })
     });
@@ -57,10 +64,12 @@ let DATA_DIR = resolve("./api");
       await writeDataFile(`${from[0]}-to-ALL.json`, JSON.stringify({
         updateDate,
         from: from[0],
-        to: Object.fromEntries(values)
+        to: Object.fromEntries(values),
+        checkDate
       },null,2));
       let textVersion = `base=${from[0]}\n`;
       textVersion += `updateDate=${updateDate}\n`;
+      textVersion += `checkDate=${checkDate}\n`;
       textVersion += values.map(i => `${i[0]}=${i[1]}`).join("\n");
       await writeDataFile(`${from[0]}-to-ALL.txt`, textVersion);
       cb();
