@@ -52,15 +52,15 @@ let DATA_DIR = resolve("./api");
       toIndex = (currencyData.length-1) - toIndex;
       let to = currencyData[toIndex];
       fileTasks.push(async (cb) => {
-        let value = `${fromTo(from[1], to[1])}`;
-        await writeDataFile(`${from[0]}-to-${to[0]}.txt`, value);
+        let value = fromTo(from[1], to[1]);
+        await writeDataFile(`${from[0]}-to-${to[0]}.txt`, `${value}`);
         await writeDataFile(`${from[0]}-to-${to[0]}.json`, JSON.stringify({value: value, updateDate, checkDate},null,2));
         cb();
       })
     });
 
     fileTasks.push(async (cb) => {
-      let values = currencyData.map(i=>([i[0], String(fromTo(from[1], i[1]))]));
+      let values = currencyData.map(i=>([i[0], fromTo(from[1], i[1])]));
       await writeDataFile(`${from[0]}-to-ALL.json`, JSON.stringify({
         updateDate,
         from: from[0],
